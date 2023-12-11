@@ -31,16 +31,15 @@ public final class RPG extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-
         Profile profile = profileManager.loadProfile(player.getName());
         if (profile != null) {
-            player.getInventory().setContents(profile.getInventoryContents());
+            player.getInventory().setContents(profile.getPlayerInventory().getContents());
             player.teleport(profile.getLocation());
         }
         profileSelectionGUI.openInventory(player);
-
-
     }
+
+
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();

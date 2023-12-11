@@ -1,16 +1,16 @@
 package net.mineshock.rpg;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.Location;
 
 public class Profile {
     private final String playerName;
-    private final ItemStack[] inventoryContents;
+    private final PlayerInventory playerInventory;
     private final Location location;
 
-    public Profile(Player player, ItemStack[] inventoryContents, Location location) {
+    public Profile(Player player, PlayerInventory playerInventory, Location location) {
         this.playerName = player.getName();
-        this.inventoryContents = inventoryContents;
+        this.playerInventory = playerInventory;
         this.location = location;
     }
 
@@ -18,8 +18,8 @@ public class Profile {
         return playerName;
     }
 
-    public ItemStack[] getInventoryContents() {
-        return inventoryContents;
+    public PlayerInventory getPlayerInventory() {
+        return playerInventory;
     }
 
     public Location getLocation() {

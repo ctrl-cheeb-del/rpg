@@ -41,7 +41,7 @@ public class ProfileSelectionGUI implements Listener {
 
             if (profile != null) {
                 Player player = (Player) event.getWhoClicked();
-                player.getInventory().setContents(profile.getInventoryContents());
+                player.getInventory().setContents(profile.getPlayerInventory().getContents());
                 player.teleport(profile.getLocation());
                 player.closeInventory();
             }
