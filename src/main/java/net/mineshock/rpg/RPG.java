@@ -25,11 +25,11 @@ public final class RPG extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+
         Player player = event.getPlayer();
         Profile profile = profileManager.loadProfile(player.getName());
         if (profile != null) {

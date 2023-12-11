@@ -1,8 +1,10 @@
 package net.mineshock.rpg;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.Location;
 
+@Getter
 public class Profile {
     private final String playerName;
     private final PlayerInventory playerInventory;
@@ -14,15 +16,15 @@ public class Profile {
         this.location = location;
     }
 
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public PlayerInventory getPlayerInventory() {
-        return playerInventory;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
+//    public String getPlayerName() {
+//        return playerName;
+//    }
+//
+//    public PlayerInventory getPlayerInventory() {
+//        return playerInventory;
+//    }
+//
+//    public Location getLocation() {
+//        return location;
+//    }
 }
