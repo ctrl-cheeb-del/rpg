@@ -1,0 +1,4 @@
+name: RPG
+version: '${project.version}'
+main: net.mineshock.rpg.RPG
+api-version: '1.20'
