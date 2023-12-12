@@ -35,10 +35,12 @@ public class Profile {
         player.teleport(location);
         PlayerInventory playerInventory = player.getInventory();
         playerInventory.clear();
-        for (ItemStack item : savedItems) {
+        for (int i = 0; i < savedItems.size(); i++) {
+            ItemStack item = savedItems.get(i);
             if (item != null) {
-                playerInventory.addItem(item);
+                playerInventory.setItem(i, item);
             }
         }
     }
+
 }
