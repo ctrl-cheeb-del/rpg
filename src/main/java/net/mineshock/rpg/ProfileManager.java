@@ -65,6 +65,11 @@ public class ProfileManager {
             if (player != null) {
                 return new Profile(player, (PlayerInventory) playerInventory, location);
             }
+        } else {
+            Player player = Bukkit.getPlayer(playerUUID);
+            if (player != null) {
+                return new Profile(player, player.getInventory(), player.getLocation());
+            }
         }
         return null;
     }
@@ -84,5 +89,4 @@ public class ProfileManager {
         }
         return profiles;
     }
-
 }

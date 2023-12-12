@@ -8,7 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Map;
 
@@ -43,25 +45,47 @@ public class ProfileSelectionGUI implements Listener {
             item.setItemMeta(meta);
             inv.addItem(item);
         }
+        for (ItemStack item : inv.getContents()) {
+            System.out.println("Inventory item: " + item);
+        }
         player.openInventory(inv);
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof ProfileSelectionGUI) {
+        System.out.println("Inventory click event triggered");
+        if (event.getView().getTitle().equals("Profile Selection")) {
             event.setCancelled(true);
             ItemStack item = event.getCurrentItem();
+            if (item != null) {
+                System.out.println("Clicked item type: " + item.getType());
+            }
             if (item != null && item.getType() == Material.PLAYER_HEAD) {
+                System.out.println("profile clicked");
                 String profileUUID = item.getItemMeta().getDisplayName();
+                System.out.println("Clicked profile UUID: " + profileUUID);
                 Profile profile = profileManager.loadProfile(profileUUID);
                 if (profile != null) {
+                    System.out.println("Loaded profile UUID: " + profile.getUUID());
                     Player player = (Player) event.getWhoClicked();
                     profile.applyToPlayer(player);
+                    player.removePotionEffect(PotionEffectType.BLINDNESS);
+                    player.closeInventory();
                 }
             }
             if (item != null && item.getType() == Material.EMERALD_BLOCK) {
-                // Code to create a new profile goes here
+                System.out.println("create profile clicked");
+                String playerUUID = event.getWhoClicked().getUniqueId().toString();
+                Player player = (Player) event.getWhoClicked();
+                player.removePotionEffect(PotionEffectType.BLINDNESS);
+                Profile profile = new Profile(player, player.getInventory(), player.getLocation());
+                profileManager.saveProfile(playerUUID, player);
+                player.closeInventory();
             }
         }
     }
+
+
+
+
 }
