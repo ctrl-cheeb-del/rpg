@@ -2,6 +2,8 @@ package net.mineshock.rpg;
 
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
@@ -9,14 +11,10 @@ import java.io.IOException;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ProfileManager {
     @Getter
@@ -28,7 +26,13 @@ public class ProfileManager {
     }
 
     public void saveProfile(String playerUUID, Player player) {
-        Profile profile = new Profile(player, player.getInventory(), player.getLocation());
+        List<ItemStack> contents = new ArrayList<>(Arrays.asList(player.getInventory().getContents()));
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null) {
+                contents.add(item);
+            }
+        }
+        Profile profile = new Profile(player, player.getInventory(), contents, player.getLocation());
         File file = new File(plugin.getDataFolder() + File.separator + "players" + File.separator + playerUUID + ".yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         config.set("playerName", profile.getPlayerName());
@@ -43,37 +47,23 @@ public class ProfileManager {
     }
 
     public Profile loadProfile(String playerUUID) {
-        System.out.println("Loading profile with UUID: " + playerUUID);
         File file = new File(plugin.getDataFolder() + File.separator + "players" + File.separator + playerUUID + ".yml");
         if (file.exists()) {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-            List<ItemStack> playerInventoryItems = new ArrayList<>();
-            ConfigurationSection inventorySection = config.getConfigurationSection("playerInventory");
-            if (inventorySection != null) {
-                for (String key : inventorySection.getKeys(false)) {
-                    playerInventoryItems.add(inventorySection.getItemStack(key));
-                }
-            }
-            Inventory playerInventory = null;
-            if (!playerInventoryItems.isEmpty()) {
-                playerInventory = Bukkit.createInventory(null, playerInventoryItems.size());
-                for (ItemStack item : playerInventoryItems) {
-                    playerInventory.addItem(item);
-                }
+            List<ItemStack> savedItems = (List<ItemStack>) config.get("playerInventory");
+            if (savedItems == null || savedItems.isEmpty()) {
+                // Handle the case where the saved inventory is empty or null
+                return null;
             }
             Location location = config.getLocation("location");
-            Player player = Bukkit.getPlayer(playerUUID);
-            if (player != null) {
-                return new Profile(player, (PlayerInventory) playerInventory, location);
-            }
-        } else {
-            Player player = Bukkit.getPlayer(playerUUID);
-            if (player != null) {
-                return new Profile(player, player.getInventory(), player.getLocation());
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(playerUUID));
+            if (offlinePlayer.hasPlayedBefore()) {
+                return new Profile(offlinePlayer, offlinePlayer.getPlayer().getInventory(), savedItems, location);
             }
         }
         return null;
     }
+
 
     public Map<String, Profile> getProfiles() {
         File folder = new File(plugin.getDataFolder() + File.separator + "players");

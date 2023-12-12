@@ -1,31 +1,44 @@
 package net.mineshock.rpg;
+
 import lombok.Getter;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.Location;
-import java.util.UUID;
 
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 public class Profile {
     private UUID uuid;
     private final String playerName;
-    private final PlayerInventory playerInventory;
+    private final List<ItemStack> savedItems;
     private final Location location;
+    @Getter
+    private final PlayerInventory playerInventory;
 
-    public Profile(Player player, PlayerInventory playerInventory, Location location) {
+    public Profile(OfflinePlayer player, PlayerInventory playerInventory, List<ItemStack> savedItems, Location location) {
+        this.uuid = player.getUniqueId();
         this.playerName = player.getName();
         this.playerInventory = playerInventory;
+        this.savedItems = savedItems;
         this.location = location;
     }
 
-    public synchronized void applyToPlayer(Player player) {
-        System.out.println("Applying profile to player");
-        player.getInventory().setContents(this.playerInventory.getContents());
-        player.teleport(this.location);
+    public UUID getUUID() {
+        return this.uuid;
     }
 
-    public UUID getUUID() {
-        return uuid;
+    public void applyToPlayer(Player player) {
+        player.teleport(location);
+        PlayerInventory playerInventory = player.getInventory();
+        playerInventory.clear();
+        for (ItemStack item : savedItems) {
+            if (item != null) {
+                playerInventory.addItem(item);
+            }
+        }
     }
 }

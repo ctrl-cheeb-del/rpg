@@ -1,5 +1,6 @@
 package net.mineshock.rpg;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -38,13 +39,19 @@ public final class RPG extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        getLogger().info("Player joined: " + event.getPlayer().getName());
-        event.getPlayer().getInventory().clear();
-        event.getPlayer().setGameMode(GameMode.SURVIVAL);
-        event.getPlayer().teleport(event.getPlayer().getWorld().getSpawnLocation());
-        event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Integer.MAX_VALUE, 5));
-        this.profileSelectionGUI.openInventory(event.getPlayer());
+        Player player = event.getPlayer();
+        player.setGameMode(GameMode.SURVIVAL);
+        player.teleport(player.getWorld().getSpawnLocation());
+        player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Integer.MAX_VALUE, 5));
+
+        Bukkit.getScheduler().runTask(this, () -> {
+            player.getInventory().clear();
+            System.out.println("Cleared inventory for player: " + player.getName());  // Debugging statement
+            this.profileSelectionGUI.openInventory(player);
+        });
     }
+
+
 
 
 

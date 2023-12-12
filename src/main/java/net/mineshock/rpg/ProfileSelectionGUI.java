@@ -1,5 +1,7 @@
 package net.mineshock.rpg;
 
+import net.mineshock.rpg.Profile;
+import net.mineshock.rpg.ProfileManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,6 +14,9 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class ProfileSelectionGUI implements Listener {
@@ -22,7 +27,6 @@ public class ProfileSelectionGUI implements Listener {
     }
 
     public void openInventory(Player player) {
-        System.out.println("opening inventory for player" + player.getName());
         Map<String, Profile> profiles = profileManager.getProfiles();
         int size = 9 * ((profiles.size() + 8) / 9);
         if (size == 0) {
@@ -45,47 +49,36 @@ public class ProfileSelectionGUI implements Listener {
             item.setItemMeta(meta);
             inv.addItem(item);
         }
-        for (ItemStack item : inv.getContents()) {
-            System.out.println("Inventory item: " + item);
-        }
         player.openInventory(inv);
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        System.out.println("Inventory click event triggered");
         if (event.getView().getTitle().equals("Profile Selection")) {
             event.setCancelled(true);
             ItemStack item = event.getCurrentItem();
             if (item != null) {
-                System.out.println("Clicked item type: " + item.getType());
-            }
-            if (item != null && item.getType() == Material.PLAYER_HEAD) {
-                System.out.println("profile clicked");
-                String profileUUID = item.getItemMeta().getDisplayName();
-                System.out.println("Clicked profile UUID: " + profileUUID);
-                Profile profile = profileManager.loadProfile(profileUUID);
-                if (profile != null) {
-                    System.out.println("Loaded profile UUID: " + profile.getUUID());
+                if (item.getType() == Material.PLAYER_HEAD) {
+                    String profileUUID = item.getItemMeta().getDisplayName();
+                    Profile profile = profileManager.loadProfile(profileUUID);
+                    if (profile != null) {
+                        Player player = (Player) event.getWhoClicked();
+                        player.getInventory().setContents(profile.getPlayerInventory().getContents());
+                        player.removePotionEffect(PotionEffectType.BLINDNESS);
+                        profile.applyToPlayer(player);
+                        player.closeInventory();
+                    }
+                }
+                if (item.getType() == Material.EMERALD_BLOCK) {
+                    String playerUUID = event.getWhoClicked().getUniqueId().toString();
                     Player player = (Player) event.getWhoClicked();
-                    profile.applyToPlayer(player);
                     player.removePotionEffect(PotionEffectType.BLINDNESS);
+                    List<ItemStack> contents = new ArrayList<>(Arrays.asList(player.getInventory().getContents()));
+                    Profile profile = new Profile(player, player.getInventory(), contents, player.getLocation());
+                    profileManager.saveProfile(playerUUID, player);
                     player.closeInventory();
                 }
             }
-            if (item != null && item.getType() == Material.EMERALD_BLOCK) {
-                System.out.println("create profile clicked");
-                String playerUUID = event.getWhoClicked().getUniqueId().toString();
-                Player player = (Player) event.getWhoClicked();
-                player.removePotionEffect(PotionEffectType.BLINDNESS);
-                Profile profile = new Profile(player, player.getInventory(), player.getLocation());
-                profileManager.saveProfile(playerUUID, player);
-                player.closeInventory();
-            }
         }
     }
-
-
-
-
 }
