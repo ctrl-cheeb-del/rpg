@@ -16,15 +16,8 @@ public class Profile {
         this.location = location;
     }
 
-//    public String getPlayerName() {
-//        return playerName;
-//    }
-//
-//    public PlayerInventory getPlayerInventory() {
-//        return playerInventory;
-//    }
-//
-//    public Location getLocation() {
-//        return location;
-//    }
+    public void applyToPlayer(Player player) {
+        player.getInventory().setContents(this.playerInventory.getContents());
+        player.teleport(this.location);
+    }
 }

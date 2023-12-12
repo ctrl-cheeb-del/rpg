@@ -7,11 +7,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.io.File;
+
 public final class RPG extends JavaPlugin implements Listener {
-    private final ProfileManager profileManager = new ProfileManager();
+    private final ProfileManager profileManager = new ProfileManager(this);
     private final ProfileSelectionGUI profileSelectionGUI = new ProfileSelectionGUI(profileManager);
-
-
 
     @Override
     public void onEnable() {
@@ -20,6 +20,11 @@ public final class RPG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(profileSelectionGUI, this);
 
+        // Create plugin folder
+        File pluginFolder = new File(getDataFolder() + File.separator + "players");
+        if (!pluginFolder.exists()) {
+            pluginFolder.mkdirs();
+        }
     }
 
     @Override
@@ -29,20 +34,13 @@ public final class RPG extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-
-        Player player = event.getPlayer();
-        Profile profile = profileManager.loadProfile(player.getName());
-        if (profile != null) {
-            player.getInventory().setContents(profile.getPlayerInventory().getContents());
-            player.teleport(profile.getLocation());
-        }
-        profileSelectionGUI.openInventory(player);
+        getLogger().info("Player joined: " + event.getPlayer().getName());
+        this.profileSelectionGUI.openInventory(event.getPlayer());
     }
-
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        profileManager.saveProfile(player);
+        profileManager.saveProfile(player.getUniqueId().toString(), player);
     }
 }
