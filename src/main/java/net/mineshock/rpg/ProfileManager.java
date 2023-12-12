@@ -43,6 +43,7 @@ public class ProfileManager {
     }
 
     public Profile loadProfile(String playerUUID) {
+        System.out.println("Loading profile with UUID: " + playerUUID);
         File file = new File(plugin.getDataFolder() + File.separator + "players" + File.separator + playerUUID + ".yml");
         if (file.exists()) {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);

@@ -19,7 +19,7 @@ public class Profile {
         this.location = location;
     }
 
-    public void applyToPlayer(Player player) {
+    public synchronized void applyToPlayer(Player player) {
         System.out.println("Applying profile to player");
         player.getInventory().setContents(this.playerInventory.getContents());
         player.teleport(this.location);
