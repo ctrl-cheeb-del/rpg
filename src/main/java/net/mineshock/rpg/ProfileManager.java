@@ -1,4 +1,5 @@
 package net.mineshock.rpg;
+
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -41,8 +42,8 @@ public class ProfileManager {
         profiles.put(playerUUID, profile);
     }
 
-    public Profile loadProfile(String playerName) {
-        File file = new File(plugin.getDataFolder() + File.separator + "players" + File.separator + playerName + ".yml");
+    public Profile loadProfile(String playerUUID) {
+        File file = new File(plugin.getDataFolder() + File.separator + "players" + File.separator + playerUUID + ".yml");
         if (file.exists()) {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             List<ItemStack> playerInventoryItems = new ArrayList<>();
@@ -60,7 +61,7 @@ public class ProfileManager {
                 }
             }
             Location location = config.getLocation("location");
-            Player player = Bukkit.getPlayer(playerName);
+            Player player = Bukkit.getPlayer(playerUUID);
             if (player != null) {
                 return new Profile(player, (PlayerInventory) playerInventory, location);
             }
@@ -69,22 +70,19 @@ public class ProfileManager {
     }
 
     public Map<String, Profile> getProfiles() {
-        Map<String, Profile> profiles = new HashMap<>();
         File folder = new File(plugin.getDataFolder() + File.separator + "players");
         if (folder.exists() && folder.isDirectory()) {
             for (File file : folder.listFiles()) {
                 if (file.isFile() && file.getName().endsWith(".yml")) {
-                    String playerName = file.getName().replace(".yml", "");
-                    Profile profile = loadProfile(playerName);
+                    String playerUUID = file.getName().replace(".yml", "");
+                    Profile profile = loadProfile(playerUUID);
                     if (profile != null) {
-                        profiles.put(playerName, profile);
+                        profiles.put(playerUUID, profile);
                     }
                 }
             }
         }
         return profiles;
     }
-
-
 
 }

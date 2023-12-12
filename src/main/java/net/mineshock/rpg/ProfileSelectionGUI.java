@@ -14,27 +14,9 @@ import java.util.Map;
 
 public class ProfileSelectionGUI implements Listener {
     private final ProfileManager profileManager;
-    private Inventory inv;
 
     public ProfileSelectionGUI(ProfileManager profileManager) {
         this.profileManager = profileManager;
-        this.inv = Bukkit.createInventory(null, 9, "Select Profile");
-
-        // Add profiles to the inventory
-        for (String playerUUID : profileManager.getProfiles().keySet()) {
-            ItemStack item = new ItemStack(Material.DIAMOND, 1);
-            ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(profileManager.getProfiles().get(playerUUID).getPlayerName());
-            item.setItemMeta(meta);
-            inv.addItem(item);
-        }
-
-        // Add a button for creating a new profile
-        ItemStack createProfileButton = new ItemStack(Material.EMERALD_BLOCK, 1);
-        ItemMeta createProfileButtonMeta = createProfileButton.getItemMeta();
-        createProfileButtonMeta.setDisplayName("Create Profile");
-        createProfileButton.setItemMeta(createProfileButtonMeta);
-        inv.setItem(8, createProfileButton);
     }
 
     public void openInventory(Player player) {
@@ -64,21 +46,21 @@ public class ProfileSelectionGUI implements Listener {
         player.openInventory(inv);
     }
 
-
-
-
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getInventory().getHolder() instanceof ProfileSelectionGUI) {
             event.setCancelled(true);
             ItemStack item = event.getCurrentItem();
             if (item != null && item.getType() == Material.PLAYER_HEAD) {
-                String profileName = item.getItemMeta().getDisplayName();
-                Profile profile = profileManager.loadProfile(profileName);
+                String profileUUID = item.getItemMeta().getDisplayName();
+                Profile profile = profileManager.loadProfile(profileUUID);
                 if (profile != null) {
                     Player player = (Player) event.getWhoClicked();
                     profile.applyToPlayer(player);
                 }
+            }
+            if (item != null && item.getType() == Material.EMERALD_BLOCK) {
+                // Code to create a new profile goes here
             }
         }
     }

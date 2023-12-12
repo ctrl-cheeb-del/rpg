@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.io.File;
+import java.util.Map;
 
 public final class RPG extends JavaPlugin implements Listener {
     private final ProfileManager profileManager = new ProfileManager(this);
@@ -35,8 +36,15 @@ public final class RPG extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         getLogger().info("Player joined: " + event.getPlayer().getName());
-        this.profileSelectionGUI.openInventory(event.getPlayer());
+        Map<String, Profile> profiles = profileManager.getProfiles();
+        String playerUUID = event.getPlayer().getUniqueId().toString();
+        if (profiles.containsKey(playerUUID)) {
+            this.profileSelectionGUI.openInventory(event.getPlayer());
+        } else {
+            // Code to create a new profile goes here
+        }
     }
+
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
