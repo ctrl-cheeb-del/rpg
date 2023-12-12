@@ -1,4 +1,4 @@
-package net.mineshock.rpg;
+package net.mineshock.rpg.profile;
 
 import lombok.Getter;
 import org.bukkit.OfflinePlayer;

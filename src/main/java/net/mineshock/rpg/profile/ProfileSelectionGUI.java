@@ -1,7 +1,7 @@
-package net.mineshock.rpg;
+package net.mineshock.rpg.profile;
 
-import net.mineshock.rpg.Profile;
-import net.mineshock.rpg.ProfileManager;
+import net.mineshock.rpg.profile.Profile;
+import net.mineshock.rpg.profile.ProfileManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -10,7 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 

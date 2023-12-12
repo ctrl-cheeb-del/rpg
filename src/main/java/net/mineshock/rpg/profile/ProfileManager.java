@@ -1,6 +1,8 @@
-package net.mineshock.rpg;
+package net.mineshock.rpg.profile;
 
 import lombok.Getter;
+import net.mineshock.rpg.RPG;
+import net.mineshock.rpg.profile.Profile;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -9,10 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.*;
 
