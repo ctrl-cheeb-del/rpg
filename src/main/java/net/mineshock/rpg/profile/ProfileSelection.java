@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.gui.PagedGui;
@@ -20,6 +21,7 @@ import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 import xyz.xenondevs.invui.window.Window;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ProfileSelection {
@@ -37,9 +39,11 @@ public class ProfileSelection {
     private static final class ProfileItem extends AbstractItem {
 
         private final Profile profile;
+        private final RPG plugin;
 
-        private ProfileItem(Profile profile) {
+        private ProfileItem(Profile profile, RPG plugin) {
             this.profile = profile;
+            this.plugin = plugin;
         }
 
         /**
@@ -56,6 +60,7 @@ public class ProfileSelection {
             ItemMeta meta = stack.getItemMeta();
 
             meta.displayName(Component.text(profileId, NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false));
+            stack.setItemMeta(meta);
 
 
             return new ItemBuilder(stack);
@@ -67,6 +72,45 @@ public class ProfileSelection {
         @Override
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent inventoryClickEvent) {
 
+            plugin.getProfileManager().loadProfile(profile);
+
+            player.removePotionEffect(PotionEffectType.BLINDNESS);
+            player.closeInventory();
+        }
+    }
+
+    private static final class NewProfileItem extends AbstractItem {
+
+        private final RPG plugin;
+
+        private NewProfileItem(RPG plugin) {
+            this.plugin = plugin;
+        }
+
+        @Override
+        public ItemProvider getItemProvider() {
+
+            ItemStack stack = new ItemStack(Material.EMERALD_BLOCK);
+            ItemMeta meta = stack.getItemMeta();
+
+            meta.displayName(Component.text("Create a new profile!", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false));
+
+            stack.setItemMeta(meta);
+
+            return new ItemBuilder(stack);
+        }
+
+        @Override
+        public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent inventoryClickEvent) {
+
+            try {
+                plugin.getProfileManager().createProfile(player.getUniqueId());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            player.removePotionEffect(PotionEffectType.BLINDNESS);
+            player.closeInventory();
         }
     }
 
@@ -91,15 +135,16 @@ public class ProfileSelection {
         ArrayList<Item> items = new ArrayList<>();
 
         for (Profile profile : plugin.getProfileManager().getProfiles(player.getUniqueId())) {
-            items.add(new ProfileItem(profile));
+            items.add(new ProfileItem(profile, plugin));
         }
 
         Gui gui = PagedGui.items()
                 .setStructure(
                         "# # # # # # # # #",
                         "# # # # # # # # #",
-                        "# # # # # # # # #")
+                        "# # # # # # # # N")
                 .addIngredient('#', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
+                .addIngredient('N', new NewProfileItem(plugin))
                 .setContent(items)
                 .build();
 

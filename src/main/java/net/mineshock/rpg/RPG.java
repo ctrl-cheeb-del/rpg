@@ -2,6 +2,7 @@ package net.mineshock.rpg;
 
 import lombok.Getter;
 import net.mineshock.rpg.profile.ProfileManager;
+import net.mineshock.rpg.profile.ProfileSelection;
 import net.mineshock.rpg.profile.ProfileSelectionGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -21,14 +22,13 @@ public final class RPG extends JavaPlugin implements Listener {
     @Getter
     private final ProfileManager profileManager = new ProfileManager(this);
 
-    private final ProfileSelectionGUI profileSelectionGUI = new ProfileSelectionGUI(profileManager);
+    private final ProfileSelection profileSelectionGUI = new ProfileSelection(this);
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         System.out.println("were in");
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(profileSelectionGUI, this);
 
         // Create plugin folder
         File pluginFolder = new File(getDataFolder() + File.separator + "players");
@@ -52,7 +52,7 @@ public final class RPG extends JavaPlugin implements Listener {
         Bukkit.getScheduler().runTask(this, () -> {
             player.getInventory().clear();
             System.out.println("Cleared inventory for player: " + player.getName());  // Debugging statement
-            this.profileSelectionGUI.openInventory(player);
+            profileSelectionGUI.createGui(player).open();
         });
     }
 
