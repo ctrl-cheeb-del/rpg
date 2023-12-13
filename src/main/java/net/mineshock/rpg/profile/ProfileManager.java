@@ -76,13 +76,13 @@ public class ProfileManager {
      * Puts profile into hashmap
      **/
     public void loadProfile(Profile profile) {
-
         Player player = (Player) profile.getPlayer();
         List<ItemStack> savedItems = Arrays.asList(profile.getPlayerInventory());
         Location playerLocation = profile.getLocation();
         double exp = profile.getExp();
 
         PlayerInventory playerInventory = player.getInventory();
+
         for (int i = 0; i < savedItems.size(); i++) {
             ItemStack item = savedItems.get(i);
             if (item != null) {
@@ -90,13 +90,20 @@ public class ProfileManager {
             }
         }
 
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            ItemStack[] armorContents = playerInventory.getArmorContents(); // Save current armour
+            playerInventory.setArmorContents(new ItemStack[]{null, null, null, null}); // Remove armour
+            Bukkit.getScheduler().runTaskLater(plugin, () -> playerInventory.setArmorContents(armorContents), 1L); // requip the armour after 1 tick
+        }, 1L);
+
         player.teleport(playerLocation);
 
-        //insert logic for leveling system
+        // Insert logic for leveling system
 
         profiles.put(player, profile);
-
     }
+
+
 
 
     /**
