@@ -1,5 +1,6 @@
 package net.mineshock.rpg;
 
+import lombok.Getter;
 import net.mineshock.rpg.profile.ProfileManager;
 import net.mineshock.rpg.profile.ProfileSelectionGUI;
 import org.bukkit.Bukkit;
@@ -17,7 +18,9 @@ import java.io.File;
 import java.io.IOException;
 
 public final class RPG extends JavaPlugin implements Listener {
+    @Getter
     private final ProfileManager profileManager = new ProfileManager(this);
+
     private final ProfileSelectionGUI profileSelectionGUI = new ProfileSelectionGUI(profileManager);
 
     @Override
