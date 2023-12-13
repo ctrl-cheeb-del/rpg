@@ -14,6 +14,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
+import java.io.IOException;
 
 public final class RPG extends JavaPlugin implements Listener {
     private final ProfileManager profileManager = new ProfileManager(this);
@@ -57,8 +58,9 @@ public final class RPG extends JavaPlugin implements Listener {
 
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
+    public void onPlayerQuit(PlayerQuitEvent event) throws IOException {
         Player player = event.getPlayer();
-        profileManager.saveProfile(player.getUniqueId().toString(), player);
+        profileManager.saveProfile(player.getUniqueId(), profileManager.getProfiles().get(player));
+        profileManager.getProfiles().remove(player);
     }
 }
