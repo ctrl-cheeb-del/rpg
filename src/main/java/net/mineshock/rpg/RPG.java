@@ -1,6 +1,7 @@
 package net.mineshock.rpg;
 
 import lombok.Getter;
+import net.mineshock.rpg.profile.Profile;
 import net.mineshock.rpg.profile.ProfileManager;
 import net.mineshock.rpg.profile.ProfileSelection;
 import net.mineshock.rpg.profile.ProfileSelectionGUI;
@@ -8,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -63,7 +65,20 @@ public final class RPG extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) throws IOException {
         Player player = event.getPlayer();
-        profileManager.saveProfile(player.getUniqueId(), profileManager.getProfiles().get(player));
-        profileManager.getProfiles().remove(player);
+        Profile profile = profileManager.getProfiles().get(player);
+        if (profile != null) {
+            profileManager.saveProfile(player.getUniqueId(), profile);
+            profileManager.getProfiles().remove(player);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerKick(PlayerKickEvent event) throws IOException {
+        Player player = event.getPlayer();
+        Profile profile = profileManager.getProfiles().get(player);
+        if (profile != null) {
+            profileManager.saveProfile(player.getUniqueId(), profile);
+            profileManager.getProfiles().remove(player);
+        }
     }
 }

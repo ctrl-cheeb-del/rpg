@@ -23,11 +23,11 @@ import xyz.xenondevs.invui.window.Window;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileSelection {
 
     private final RPG plugin;
-
 
     public ProfileSelection(RPG plugin) {
         this.plugin = plugin;
@@ -40,10 +40,12 @@ public class ProfileSelection {
 
         private final Profile profile;
         private final RPG plugin;
+        private final int profileNumber;
 
-        private ProfileItem(Profile profile, RPG plugin) {
+        private ProfileItem(Profile profile, RPG plugin, int profileNumber) {
             this.profile = profile;
             this.plugin = plugin;
+            this.profileNumber = profileNumber;
         }
 
         /**
@@ -59,7 +61,8 @@ public class ProfileSelection {
             ItemStack stack = new ItemStack(Material.PLAYER_HEAD);
             ItemMeta meta = stack.getItemMeta();
 
-            meta.displayName(Component.text(profileId, NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false));
+            meta.displayName(Component.text("Player Profile: " + profileNumber, NamedTextColor.AQUA).decorate(TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false));
+            meta.lore(List.of(Component.text("Level {insert exp logic}", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false), Component.text(""), Component.text(profileId, NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false), Component.text(""), Component.text("Click to load!", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false)));
             stack.setItemMeta(meta);
 
 
@@ -134,8 +137,11 @@ public class ProfileSelection {
 
         ArrayList<Item> items = new ArrayList<>();
 
+        int i = 1;
+
         for (Profile profile : plugin.getProfileManager().getProfiles(player.getUniqueId())) {
-            items.add(new ProfileItem(profile, plugin));
+            items.add(new ProfileItem(profile, plugin, i));
+            i++;
         }
 
         Gui gui = PagedGui.items()
