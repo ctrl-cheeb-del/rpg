@@ -4,12 +4,14 @@ import lombok.Getter;
 import net.mineshock.rpg.profile.Profile;
 import net.mineshock.rpg.profile.ProfileManager;
 import net.mineshock.rpg.profile.ProfileSelection;
-import net.mineshock.rpg.profile.ProfileSelectionGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -55,11 +57,9 @@ public final class RPG extends JavaPlugin implements Listener {
             player.getInventory().clear();
             System.out.println("Cleared inventory for player: " + player.getName());  // Debugging statement
             profileSelectionGUI.createGui(player).open();
+            player.setMetadata("selecting-profile", new FixedMetadataValue(this, true));
         });
     }
-
-
-
 
 
     @EventHandler
@@ -81,4 +81,18 @@ public final class RPG extends JavaPlugin implements Listener {
             profileManager.getProfiles().remove(player);
         }
     }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+
+        if (player.hasMetadata("selecting-profile")) {
+
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                profileSelectionGUI.createGui(player).open();
+            }, 1L);
+        }
+
+    }
+
 }

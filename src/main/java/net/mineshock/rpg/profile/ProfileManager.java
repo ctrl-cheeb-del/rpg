@@ -67,7 +67,6 @@ public class ProfileManager {
         return profiles;
     }
 
-
     /**
      * Used when a profile is chosen on the GUI
      * Sets the players inventory to the inventory of the profile
@@ -93,7 +92,7 @@ public class ProfileManager {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             ItemStack[] armorContents = playerInventory.getArmorContents(); // Save current armour
             playerInventory.setArmorContents(new ItemStack[]{null, null, null, null}); // Remove armour
-            Bukkit.getScheduler().runTaskLater(plugin, () -> playerInventory.setArmorContents(armorContents), 1L); // requip the armour after 1 tick
+            Bukkit.getScheduler().runTaskLater(plugin, () -> playerInventory.setArmorContents(armorContents), 1L); // reequip the armour after 1 tick
         }, 1L);
 
         player.teleport(playerLocation);
@@ -102,9 +101,6 @@ public class ProfileManager {
 
         profiles.put(player, profile);
     }
-
-
-
 
     /**
      * Creates a new profile
@@ -157,26 +153,5 @@ public class ProfileManager {
 
         config.save(file);
     }
-
-
-
-
-
-    //Profile class has Player, ItemStack[], Location, Double exp, UUID profileId - done
-
-    //YAML file for each players UUID - done
-    //Different sections for each profile, named the UUID of the section - done
-    //Section contains inventory, exp, location sub-section - done
-
-    //Player joins - checks if file for them exists - done
-    //If not - displays the create profile icon, which makes a new profile for them (loads this into hashmap) - creates file for them and puts this new profile in it - done
-    //If yes - displays all the profiles in their file, which all give items, tp etc (loads this into hashmap) + also the new profile button
-    //Player leaves - updates that profile in the file and removes it from the hashmap - done
-
-    //Method to fetch profiles for a player, returns list - done
-    //Method to load a chosen profile (puts in hashmap and handles inv etc) - done
-    //Method create a new profile - done
-    //Method to save a profile - done
-
 
 }

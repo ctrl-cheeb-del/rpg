@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.mineshock.rpg.RPG;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -77,8 +78,11 @@ public class ProfileSelection {
 
             plugin.getProfileManager().loadProfile(profile);
 
+            player.removeMetadata("selecting-profile", plugin);
             player.removePotionEffect(PotionEffectType.BLINDNESS);
-            player.closeInventory();
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                player.closeInventory();
+            }, 1L);
         }
     }
 
@@ -112,8 +116,13 @@ public class ProfileSelection {
                 throw new RuntimeException(e);
             }
 
+            player.removeMetadata("selecting-profile", plugin);
             player.removePotionEffect(PotionEffectType.BLINDNESS);
-            player.closeInventory();
+
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                player.closeInventory();
+            }, 1L);
+
         }
     }
 
