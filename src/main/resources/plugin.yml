@@ -6,3 +6,5 @@ commands:
   summonmob:
     description: summons custom mob
     usage: /summonmob <mobname> <level>
+  test:
+    description: test command

@@ -2,6 +2,7 @@ package net.mineshock.rpg;
 
 import lombok.Getter;
 import net.mineshock.rpg.commands.MobCommand;
+import net.mineshock.rpg.commands.TestCommand;
 import net.mineshock.rpg.mobs.MobSummoner;
 import net.mineshock.rpg.mobs.MobDisplay;
 import net.mineshock.rpg.profile.Profile;
@@ -32,6 +33,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class RPG extends JavaPlugin implements Listener {
+
+    @Getter
+    private static RPG instance;
+
+
     @Getter
     private final ProfileManager profileManager = new ProfileManager(this);
     private final List<CustomMob> customMobs = new ArrayList<>();
@@ -40,13 +46,18 @@ public final class RPG extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+
+        instance = this;
+
         // Plugin startup logic
         System.out.println("were in");
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new MageStaff(), this);
 
         MobDisplay mobDisplay = new MobDisplay();
         MobSummoner mobSummoner = new MobSummoner(this, mobDisplay);
         getCommand("summonmob").setExecutor(new MobCommand(this, mobSummoner, customMobs));
+        getCommand("test").setExecutor(new TestCommand());
 
         // Create plugin folder
         File pluginFolder = new File(getDataFolder() + File.separator + "players");
@@ -73,6 +84,7 @@ public final class RPG extends JavaPlugin implements Listener {
     public void onDisable() {
         // Plugin shutdown logic
     }
+
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -125,14 +137,12 @@ public final class RPG extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof LivingEntity) {
-            LivingEntity entity = (LivingEntity) event.getEntity();
+        if (event.getEntity() instanceof LivingEntity entity) {
             if (entity.hasMetadata("CustomMob")) {
                 List<MetadataValue> metadata = entity.getMetadata("CustomMob");
                 for (MetadataValue value : metadata) {
                     // check if metadata is from this plugin and is from aCustomMob instance
-                    if (value.getOwningPlugin().getDescription().getName().equals(this.getDescription().getName()) && value.value() instanceof CustomMob) {
-                        CustomMob mob = (CustomMob) value.value();
+                    if (value.getOwningPlugin().getDescription().getName().equals(this.getDescription().getName()) && value.value() instanceof CustomMob mob) {
                         event.setCancelled(true);
                         double damage = event.getDamage();
                         double newHealth = mob.getHealth() - damage;
