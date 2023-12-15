@@ -17,6 +17,7 @@ public class CustomMob {
     private double health;
     @Getter
     private int level;
+    private String colorCode = "&a"; // default color code
 
     public CustomMob(JavaPlugin plugin, String name, int level) {
         this.plugin = plugin;
@@ -34,6 +35,14 @@ public class CustomMob {
         File file = new File(plugin.getDataFolder(), "mobs" + File.separator + name + ".yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
         baseHealth = config.getDouble("baseHealth");
+
+        // load name with color codes
+        if (config.getString("name") != null) {
+            this.name = config.getString("name");
+            if (name.contains("&")) {
+                colorCode = name.substring(name.indexOf("&"), name.indexOf("&") + 2);
+            }
+        }
     }
 }
 
