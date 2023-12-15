@@ -18,6 +18,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -44,7 +45,7 @@ public final class RPG extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
 
         MobDisplay mobDisplay = new MobDisplay();
-        MobSummoner mobSummoner = new MobSummoner(mobDisplay);
+        MobSummoner mobSummoner = new MobSummoner(this, mobDisplay);
         getCommand("summonmob").setExecutor(new MobCommand(this, mobSummoner, customMobs));
 
         // Create plugin folder
@@ -124,15 +125,14 @@ public final class RPG extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        System.out.println("EntityDamageEvent triggered");
         if (event.getEntity() instanceof LivingEntity) {
             LivingEntity entity = (LivingEntity) event.getEntity();
-            if (entity.getCustomName() != null) {
-                String customName = entity.getCustomName();
-                for (CustomMob mob : customMobs) {
-                    System.out.println("Mob name: " + mob.getName());
-                    if (customName.contains(mob.getName())) {
-                        System.out.println("contains name did it");
+            if (entity.hasMetadata("CustomMob")) {
+                List<MetadataValue> metadata = entity.getMetadata("CustomMob");
+                for (MetadataValue value : metadata) {
+                    // check if metadata is from this plugin and is from aCustomMob instance
+                    if (value.getOwningPlugin().getDescription().getName().equals(this.getDescription().getName()) && value.value() instanceof CustomMob) {
+                        CustomMob mob = (CustomMob) value.value();
                         event.setCancelled(true);
                         double damage = event.getDamage();
                         double newHealth = mob.getHealth() - damage;
@@ -143,7 +143,6 @@ public final class RPG extends JavaPlugin implements Listener {
                         }
                         int intHealth = (int) newHealth;
                         mobDisplay.setMobDisplayName(entity, mob.getName(), mob.getLevel(), intHealth);
-                        entity.setHealth(newHealth);
                         break;
                     }
                 }

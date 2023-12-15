@@ -29,10 +29,8 @@ public class MobCommand implements CommandExecutor {
             if (args.length == 2) {
                 String mobName = args[0];
                 int level = Integer.parseInt(args[1]);
-                CustomMob mob = new CustomMob(plugin, mobName, level);
-                double health = mob.getHealth();
-                mob.setHealth(health); // Update the health variable
-                mobSummoner.summonMob(player.getWorld(), EntityType.ZOMBIE, player.getLocation(), mobName, level, health);
+                CustomMob mob = new CustomMob(plugin, mobName, level); // new CustomMob instance for each command ran
+                mobSummoner.summonMob(player.getWorld(), EntityType.ZOMBIE, player.getLocation(), mob);
                 return true;
             }
         }
