@@ -138,7 +138,8 @@ public final class RPG extends JavaPlugin implements Listener {
                         double newHealth = mob.getHealth() - damage;
                         mob.setHealth(newHealth);
                         if (newHealth <= 0) {
-                            entity.remove();
+                            entity.setHealth(0);
+                            mobDisplay.setMobDisplayName(entity, mob.getName(), mob.getLevel(), 0);
                             break;
                         }
                         int intHealth = (int) newHealth;
