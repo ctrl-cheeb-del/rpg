@@ -21,7 +21,7 @@ public class MobSummoner {
     public void summonMob(World world, EntityType entityType, Location location, CustomMob mob) {
         LivingEntity entity = (LivingEntity) world.spawnEntity(location, entityType);
         entity.setMetadata("CustomMob", new FixedMetadataValue(plugin, mob)); // attach CustomMob instance to entity as metadata
-        entity.setCustomName(mob.getName());
+        entity.setCustomName(mob.getName().toString());
         entity.setCustomNameVisible(true);
         entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(mob.getHealth());
         entity.setHealth(mob.getHealth());
