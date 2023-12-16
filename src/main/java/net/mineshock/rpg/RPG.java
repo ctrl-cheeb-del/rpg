@@ -8,9 +8,9 @@ import net.mineshock.rpg.mobs.MobDisplay;
 import net.mineshock.rpg.profile.Profile;
 import net.mineshock.rpg.profile.ProfileManager;
 import net.mineshock.rpg.profile.ProfileSelection;
+import net.mineshock.rpg.weapons.Mage;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import net.mineshock.rpg.mobs.CustomMob;
@@ -52,7 +52,7 @@ public final class RPG extends JavaPlugin implements Listener {
         // Plugin startup logic
         System.out.println("were in");
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new MageStaff(), this);
+        getServer().getPluginManager().registerEvents(new Mage(), this);
 
         MobDisplay mobDisplay = new MobDisplay();
         MobSummoner mobSummoner = new MobSummoner(this, mobDisplay);
