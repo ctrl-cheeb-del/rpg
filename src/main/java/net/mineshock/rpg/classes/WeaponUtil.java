@@ -5,10 +5,16 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
+import java.time.Instant;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WeaponUtil {
+
+    public static Map<Player, Instant> lastAttackMap = new HashMap<>();
 
 
     /**

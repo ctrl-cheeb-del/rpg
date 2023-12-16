@@ -89,7 +89,7 @@ public final class RPG extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        player.setGameMode(GameMode.SURVIVAL);
+        player.setGameMode(GameMode.ADVENTURE);
         player.teleport(player.getWorld().getSpawnLocation());
         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Integer.MAX_VALUE, 5));
         player.setExp(0);
@@ -145,17 +145,6 @@ public final class RPG extends JavaPlugin implements Listener {
                 for (MetadataValue value : metadata) {
                     // check if metadata is from this plugin and is from aCustomMob instance
                     if (value.getOwningPlugin().getDescription().getName().equals(this.getDescription().getName()) && value.value() instanceof CustomMob mob) {
-//                        event.setCancelled(true);
-//                        double damage = event.getDamage();
-//                        double newHealth = mob.getHealth() - damage;
-//                        mob.setHealth(newHealth);
-//                        entity.damage(1);
-//                        if (newHealth <= 0) {
-//                            entity.setHealth(0);
-//                            mobDisplay.setMobDisplayName(entity, mob.getName(), mob.getLevel(), 0);
-//                            break;
-//                        }
-//                        int intHealth = (int) newHealth;
                         mobDisplay.setMobDisplayName(entity, mob.getName(), mob.getLevel());
                         break;
                     }

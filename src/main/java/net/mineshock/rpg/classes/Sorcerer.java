@@ -16,7 +16,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.Instant;
 
+import static net.mineshock.rpg.classes.WeaponUtil.lastAttackMap;
 import static net.mineshock.rpg.classes.WeaponUtil.makeDamageParticle;
 
 public class Sorcerer implements Listener {
@@ -62,6 +65,21 @@ public class Sorcerer implements Listener {
 
         Location location = player.getLocation();
 
+        Instant lastAttack = lastAttackMap.get(player);
+
+        Instant currentTime = Instant.now();
+
+        if (lastAttack != null) {
+            double timeSinceLastAttack = Duration.between(lastAttack, currentTime).getSeconds();
+
+            if (timeSinceLastAttack < 1) {
+                return;
+            }
+        }
+
+
+
+
         try {
             assert spell != null;
             Sorcerer.class.getMethod(spell, Location.class).invoke(Sorcerer.class.getDeclaredConstructor().newInstance(), location);
@@ -70,6 +88,8 @@ public class Sorcerer implements Listener {
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+
+        lastAttackMap.put(player, Instant.now());
 
     }
 
@@ -98,7 +118,7 @@ public class Sorcerer implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Location particle = makeDamageParticle(location, Particle.FLASH, Sound.ENTITY_GENERIC_EXPLODE, 10, 3, 6);
+                makeDamageParticle(location, Particle.FLASH, Sound.ENTITY_GENERIC_EXPLODE, 10, 3, 6);
             }
         }.runTaskLater(RPG.getInstance(), 10);
     }
