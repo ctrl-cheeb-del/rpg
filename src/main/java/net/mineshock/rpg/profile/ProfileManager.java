@@ -42,7 +42,7 @@ public class ProfileManager {
 
         Player player = Bukkit.getPlayer(playerUUID);
 
-        ConfigurationSection config = YamlConfiguration.loadConfiguration(playerFile).getConfigurationSection("profiles");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
 
         for (String profileUUIDAsString : config.getKeys(false)) {
             UUID profileId = UUID.fromString(profileUUIDAsString);
@@ -120,10 +120,10 @@ public class ProfileManager {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         assert player != null;
-        config.set("profiles." + profileId + ".class", classType);
-        config.set("profiles." + profileId + ".inventory", player.getInventory().getContents());
-        config.set("profiles." + profileId + ".location", player.getLocation());
-        config.set("profiles." + profileId + ".level", 1);
+        config.set(profileId + ".class", classType);
+        config.set(profileId + ".inventory", player.getInventory().getContents());
+        config.set(profileId + ".location", player.getLocation());
+        config.set(profileId + ".level", 1);
 
         config.save(file);
 
@@ -150,9 +150,9 @@ public class ProfileManager {
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-        config.set("profiles." + profileId + ".inventory", profile.getPlayerInventory());
-        config.set("profiles." + profileId + ".location", profile.getLocation());
-        config.set("profiles." + profileId + ".level", profile.getLevel());
+        config.set(profileId + ".inventory", profile.getPlayerInventory());
+        config.set(profileId + ".location", profile.getLocation());
+        config.set(profileId + ".level", profile.getLevel());
 
         config.save(file);
     }
