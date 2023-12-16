@@ -1,4 +1,4 @@
-package net.mineshock.rpg.weapons;
+package net.mineshock.rpg.classes;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -14,9 +14,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import static net.mineshock.rpg.weapons.WeaponUtil.makeDamageParticle;
+import static net.mineshock.rpg.classes.WeaponUtil.makeDamageParticle;
 
-public class Mage implements Listener {
+public class Sorcerer implements Listener {
 
     private static final NamespacedKey mageKey = new NamespacedKey(RPG.getInstance(), "mage");
 
@@ -61,7 +61,7 @@ public class Mage implements Listener {
 
         try {
             assert spell != null;
-            Mage.class.getMethod(spell + "Spell");
+            Sorcerer.class.getMethod(spell + "Spell");
         } catch (NoSuchMethodException e) {
             Bukkit.getConsoleSender().sendMessage("There is no method called " +  spell);
         }

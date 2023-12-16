@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.mineshock.rpg.RPG;
+import net.mineshock.rpg.classes.ClassType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,6 +12,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.gui.Gui;
@@ -22,7 +24,6 @@ import xyz.xenondevs.invui.item.builder.ItemBuilder;
 import xyz.xenondevs.invui.item.impl.AbstractItem;
 import xyz.xenondevs.invui.window.Window;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,8 +63,15 @@ public class ProfileSelection {
             ItemStack stack = new ItemStack(Material.PLAYER_HEAD);
             ItemMeta meta = stack.getItemMeta();
 
+            ClassType classType = profile.getClassType();
+
             meta.displayName(Component.text("Player Profile: " + profileNumber, NamedTextColor.AQUA).decorate(TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false));
-            meta.lore(List.of(Component.text("Level {insert exp logic}", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false), Component.text(""), Component.text(profileId, NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false), Component.text(""), Component.text("Click to load!", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false)));
+            meta.lore(List.of(Component.text("Class: ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false).append(classType.getName()), Component.text(""),
+                    Component.text("Level " + profile.getLevel(), NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false), Component.text(""),
+                    Component.text("Click to load!", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false), Component.text(""),
+                    Component.text(profileId, NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)
+            ));
+
             stack.setItemMeta(meta);
 
 
@@ -110,18 +118,9 @@ public class ProfileSelection {
         @Override
         public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent inventoryClickEvent) {
 
-            try {
-                plugin.getProfileManager().createProfile(player.getUniqueId());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
             player.removeMetadata("selecting-profile", plugin);
-            player.removePotionEffect(PotionEffectType.BLINDNESS);
-
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                player.closeInventory();
-            }, 1L);
+            ClassSelector.createGui(player).open();
+            player.setMetadata("selecting-profile", new FixedMetadataValue(plugin, true));
 
         }
     }

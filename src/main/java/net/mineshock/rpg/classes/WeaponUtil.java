@@ -1,11 +1,10 @@
-package net.mineshock.rpg.weapons;
+package net.mineshock.rpg.classes;
 
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 

@@ -2,19 +2,15 @@ package net.mineshock.rpg.profile;
 
 import lombok.Getter;
 import net.mineshock.rpg.RPG;
-import net.mineshock.rpg.profile.Profile;
+import net.mineshock.rpg.classes.ClassType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -52,15 +48,19 @@ public class ProfileManager {
             UUID profileId = UUID.fromString(profileUUIDAsString);
             ConfigurationSection profileSection = config.getConfigurationSection(profileUUIDAsString);
 
+            assert profileSection != null;
+            ClassType classType = ClassType.valueOf(profileSection.getString("class").toUpperCase());
+
             List<ItemStack> items = (List<ItemStack>) profileSection.get("inventory");
+            assert items != null;
             ItemStack[] itemStacks = items.toArray(new ItemStack[0]);
 
             Location playerLocation = profileSection.getLocation("location");
 
-            double exp = profileSection.getDouble("exp");
+            int level = profileSection.getInt("level");
 
             assert player != null;
-            profiles.add(new Profile(profileId, player, itemStacks, playerLocation, exp));
+            profiles.add(new Profile(profileId, player, classType, itemStacks, playerLocation, level));
 
         }
 
@@ -78,7 +78,7 @@ public class ProfileManager {
         Player player = (Player) profile.getPlayer();
         List<ItemStack> savedItems = Arrays.asList(profile.getPlayerInventory());
         Location playerLocation = profile.getLocation();
-        double exp = profile.getExp();
+        int level = profile.getLevel();
 
         PlayerInventory playerInventory = player.getInventory();
 
@@ -97,7 +97,7 @@ public class ProfileManager {
 
         player.teleport(playerLocation);
 
-        // Insert logic for leveling system
+        player.setLevel(level);
 
         profiles.put(player, profile);
     }
@@ -106,10 +106,10 @@ public class ProfileManager {
      * Creates a new profile
      * Creates the yml file, if it doesn't exist
      * Generates random UUID for the profile
-     * Assigns current inventory + location and exp of 0
+     * Assigns current inventory + location and level of 0
      * Puts profile into hashmap
      **/
-    public void createProfile(UUID playerUUID) throws IOException {
+    public void createProfile(UUID playerUUID, String classType) throws IOException {
 
         Player player = Bukkit.getPlayer(playerUUID);
         UUID profileId = UUID.randomUUID();
@@ -120,13 +120,16 @@ public class ProfileManager {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         assert player != null;
+        config.set(profileId + ".class", classType);
         config.set(profileId + ".inventory", player.getInventory().getContents());
         config.set(profileId + ".location", player.getLocation());
-        config.set(profileId + ".exp", 0.0D);
+        config.set(profileId + ".level", 1);
 
         config.save(file);
 
-        profiles.put(player, new Profile(profileId, player, player.getInventory().getContents(), player.getLocation(), 0.0D));
+        player.setLevel(1);
+
+        profiles.put(player, new Profile(profileId, player, ClassType.valueOf(classType.toUpperCase()), player.getInventory().getContents(), player.getLocation(), 1));
     }
 
     /**
@@ -149,7 +152,7 @@ public class ProfileManager {
 
         config.set(profileId + ".inventory", profile.getPlayerInventory());
         config.set(profileId + ".location", profile.getLocation());
-        config.set(profileId + ".exp", profile.getExp());
+        config.set(profileId + ".level", profile.getLevel());
 
         config.save(file);
     }

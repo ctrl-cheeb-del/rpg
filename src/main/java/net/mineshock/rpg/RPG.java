@@ -8,7 +8,7 @@ import net.mineshock.rpg.mobs.MobDisplay;
 import net.mineshock.rpg.profile.Profile;
 import net.mineshock.rpg.profile.ProfileManager;
 import net.mineshock.rpg.profile.ProfileSelection;
-import net.mineshock.rpg.weapons.Mage;
+import net.mineshock.rpg.classes.Sorcerer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.LivingEntity;
@@ -52,7 +52,7 @@ public final class RPG extends JavaPlugin implements Listener {
         // Plugin startup logic
         System.out.println("were in");
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new Mage(), this);
+        getServer().getPluginManager().registerEvents(new Sorcerer(), this);
 
         MobDisplay mobDisplay = new MobDisplay();
         MobSummoner mobSummoner = new MobSummoner(this, mobDisplay);
@@ -92,6 +92,8 @@ public final class RPG extends JavaPlugin implements Listener {
         player.setGameMode(GameMode.SURVIVAL);
         player.teleport(player.getWorld().getSpawnLocation());
         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Integer.MAX_VALUE, 5));
+        player.setExp(0);
+        player.setLevel(0);
 
         Bukkit.getScheduler().runTask(this, () -> {
             player.getInventory().clear();

@@ -1,6 +1,6 @@
 package net.mineshock.rpg.commands;
 
-import net.mineshock.rpg.weapons.Mage;
+import net.mineshock.rpg.classes.Sorcerer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,7 +17,7 @@ public class TestCommand implements CommandExecutor, TabCompleter {
 
         if (!(commandSender instanceof Player player)) return true;
 
-        player.getInventory().addItem(Mage.create());
+        player.getInventory().addItem(Sorcerer.create());
 
         return true;
     }
