@@ -14,6 +14,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import static net.mineshock.rpg.classes.WeaponUtil.makeDamageParticle;
 
 public class Sorcerer implements Listener {
@@ -28,7 +31,7 @@ public class Sorcerer implements Listener {
         ItemStack stack = new ItemStack(Material.WOODEN_HOE);
         ItemMeta meta = stack.getItemMeta();
 
-        meta.getPersistentDataContainer().set(mageKey, PersistentDataType.STRING, "test");
+        meta.getPersistentDataContainer().set(mageKey, PersistentDataType.STRING, "testSpell");
         meta.displayName(Component.text("Mage Staff", NamedTextColor.LIGHT_PURPLE).decoration(TextDecoration.ITALIC, false));
 
         stack.setItemMeta(meta);
@@ -61,9 +64,11 @@ public class Sorcerer implements Listener {
 
         try {
             assert spell != null;
-            Sorcerer.class.getMethod(spell + "Spell");
+            Sorcerer.class.getMethod(spell, Location.class).invoke(Sorcerer.class.getDeclaredConstructor().newInstance(), location);
         } catch (NoSuchMethodException e) {
-            Bukkit.getConsoleSender().sendMessage("There is no method called " +  spell);
+            Bukkit.getConsoleSender().sendMessage("There is no method called " +  spell + " with a Location parameter.");
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
 
     }
