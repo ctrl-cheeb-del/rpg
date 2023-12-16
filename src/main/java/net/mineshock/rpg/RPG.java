@@ -145,17 +145,18 @@ public final class RPG extends JavaPlugin implements Listener {
                 for (MetadataValue value : metadata) {
                     // check if metadata is from this plugin and is from aCustomMob instance
                     if (value.getOwningPlugin().getDescription().getName().equals(this.getDescription().getName()) && value.value() instanceof CustomMob mob) {
-                        event.setCancelled(true);
-                        double damage = event.getDamage();
-                        double newHealth = mob.getHealth() - damage;
-                        mob.setHealth(newHealth);
-                        if (newHealth <= 0) {
-                            entity.setHealth(0);
-                            mobDisplay.setMobDisplayName(entity, mob.getName(), mob.getLevel(), 0);
-                            break;
-                        }
-                        int intHealth = (int) newHealth;
-                        mobDisplay.setMobDisplayName(entity, mob.getName(), mob.getLevel(), intHealth);
+//                        event.setCancelled(true);
+//                        double damage = event.getDamage();
+//                        double newHealth = mob.getHealth() - damage;
+//                        mob.setHealth(newHealth);
+//                        entity.damage(1);
+//                        if (newHealth <= 0) {
+//                            entity.setHealth(0);
+//                            mobDisplay.setMobDisplayName(entity, mob.getName(), mob.getLevel(), 0);
+//                            break;
+//                        }
+//                        int intHealth = (int) newHealth;
+                        mobDisplay.setMobDisplayName(entity, mob.getName(), mob.getLevel());
                         break;
                     }
                 }

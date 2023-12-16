@@ -26,6 +26,6 @@ public class MobSummoner {
         entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(mob.getHealth());
         entity.setHealth(mob.getHealth());
         int intHealth = (int) mob.getHealth();
-        mobDisplay.setMobDisplayName(entity, mob.getName(), mob.getLevel(), intHealth);
+        mobDisplay.setMobDisplayName(entity, mob.getName(), mob.getLevel());
     }
 }

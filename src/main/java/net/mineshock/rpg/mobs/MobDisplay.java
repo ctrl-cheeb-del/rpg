@@ -6,7 +6,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 
 public class MobDisplay {
-    public void setMobDisplayName(LivingEntity entity, String name, int level, int health) {
+    public void setMobDisplayName(LivingEntity entity, String name, int level) {
         NamedTextColor nameColor = convertColorCode(name.substring(0, 2)); // get color code from name
         String actualName = name.substring(2); // get actual name without color code
 
@@ -15,7 +15,7 @@ public class MobDisplay {
                 .append(Component.text(" "))
                 .append(Component.text(actualName, nameColor))
                 .append(Component.text(" [", NamedTextColor.GRAY))
-                .append(Component.text(health, NamedTextColor.RED))
+                .append(Component.text((int) entity.getHealth(), NamedTextColor.RED))
                 .append(Component.text("/", NamedTextColor.GRAY))
                 .append(Component.text((int) entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue(), NamedTextColor.RED))
                 .append(Component.text("]", NamedTextColor.GRAY));
