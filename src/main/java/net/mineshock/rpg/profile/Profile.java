@@ -22,6 +22,7 @@ public class Profile {
     @Setter
     private int level;
 
+
     public Profile(UUID profileId, OfflinePlayer player, ClassType rpgClass, ItemStack[] playerInventory, Location location, int level) {
         this.profileId = profileId;
         this.player = player;

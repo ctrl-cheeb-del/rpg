@@ -9,8 +9,11 @@ import net.mineshock.rpg.profile.Profile;
 import net.mineshock.rpg.profile.ProfileManager;
 import net.mineshock.rpg.profile.ProfileSelection;
 import net.mineshock.rpg.classes.Sorcerer;
+import net.mineshock.rpg.questbase.PlayerQuestData;
+import net.mineshock.rpg.questbase.Quest;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import net.mineshock.rpg.mobs.CustomMob;
@@ -31,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public final class RPG extends JavaPlugin implements Listener {
 
@@ -70,6 +74,11 @@ public final class RPG extends JavaPlugin implements Listener {
             mobsFolder.mkdirs();
         }
 
+        File questFolder = new File(getDataFolder() + File.separator + "questdata");
+        if (!questFolder.exists()) {
+            questFolder.mkdirs();
+        }
+
         // Load custom mobs
         if (mobsFolder.exists()) {
             for (File file : mobsFolder.listFiles()) {
@@ -94,6 +103,11 @@ public final class RPG extends JavaPlugin implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Integer.MAX_VALUE, 5));
         player.setExp(0);
         player.setLevel(0);
+
+        UUID playerUUID = event.getPlayer().getUniqueId();
+        Quest quest = new Quest();
+        PlayerQuestData playerQuestData = new PlayerQuestData(quest);
+        playerQuestData.loadQuestStages(event);
 
         Bukkit.getScheduler().runTask(this, () -> {
             player.getInventory().clear();
