@@ -8,3 +8,6 @@ commands:
     usage: /summonmob <mobname> <level>
   test:
     description: test command
+  questUpdate:
+      description: updates quest stage
+      usage: /questUpdate <questName> <stage>

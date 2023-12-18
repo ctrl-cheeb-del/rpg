@@ -2,6 +2,7 @@ package net.mineshock.rpg;
 
 import lombok.Getter;
 import net.mineshock.rpg.commands.MobCommand;
+import net.mineshock.rpg.commands.QuestUpdateCommand;
 import net.mineshock.rpg.commands.TestCommand;
 import net.mineshock.rpg.mobs.MobSummoner;
 import net.mineshock.rpg.mobs.MobDisplay;
@@ -34,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public final class RPG extends JavaPlugin implements Listener {
@@ -57,11 +59,12 @@ public final class RPG extends JavaPlugin implements Listener {
         System.out.println("were in");
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new Sorcerer(), this);
-
+        
         MobDisplay mobDisplay = new MobDisplay();
         MobSummoner mobSummoner = new MobSummoner(this, mobDisplay);
         getCommand("summonmob").setExecutor(new MobCommand(this, mobSummoner, customMobs));
         getCommand("test").setExecutor(new TestCommand());
+        getCommand("questUpdate").setExecutor(new QuestUpdateCommand());
 
         // Create plugin folder
         File pluginFolder = new File(getDataFolder() + File.separator + "players");
@@ -72,11 +75,6 @@ public final class RPG extends JavaPlugin implements Listener {
         File mobsFolder = new File(getDataFolder() + File.separator + "mobs");
         if (!mobsFolder.exists()) {
             mobsFolder.mkdirs();
-        }
-
-        File questFolder = new File(getDataFolder() + File.separator + "questdata");
-        if (!questFolder.exists()) {
-            questFolder.mkdirs();
         }
 
         // Load custom mobs
@@ -103,11 +101,15 @@ public final class RPG extends JavaPlugin implements Listener {
         player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Integer.MAX_VALUE, 5));
         player.setExp(0);
         player.setLevel(0);
+        Profile profile = profileManager.getProfiles().get(player);
+        RPG.getInstance().getProfileManager().getProfiles().put(player, profile);
 
-        UUID playerUUID = event.getPlayer().getUniqueId();
         Quest quest = new Quest();
         PlayerQuestData playerQuestData = new PlayerQuestData(quest);
-        playerQuestData.loadQuestStages(event);
+        Map<String, String> questData = playerQuestData.loadQuestStages(event);
+        if (profile != null) {
+            profile.setQuestData(questData);
+        }
 
         Bukkit.getScheduler().runTask(this, () -> {
             player.getInventory().clear();
@@ -123,10 +125,13 @@ public final class RPG extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         Profile profile = profileManager.getProfiles().get(player);
         if (profile != null) {
+            System.out.println("Player data before saving profile: " + player);
             profileManager.saveProfile(player.getUniqueId(), profile);
             profileManager.getProfiles().remove(player);
+            System.out.println("Player data after saving profile: " + player);
         }
     }
+
 
     @EventHandler
     public void onPlayerKick(PlayerKickEvent event) throws IOException {
@@ -166,7 +171,4 @@ public final class RPG extends JavaPlugin implements Listener {
             }
         }
     }
-
-
-
 }

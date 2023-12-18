@@ -3,6 +3,7 @@ package net.mineshock.rpg.profile;
 import lombok.Getter;
 import net.mineshock.rpg.RPG;
 import net.mineshock.rpg.classes.ClassType;
+import net.mineshock.rpg.questbase.QuestCreation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -35,7 +36,7 @@ public class ProfileManager {
         List<Profile> profiles = new ArrayList<>();
 
         File folder = new File(plugin.getDataFolder() + File.separator + "players");
-        if (!folder.exists() || !folder.isDirectory()) return null;
+        if (!folder.exists() || !folder.isDirectory()) return profiles;
 
         File playerFile = new File(folder.getAbsolutePath() + File.separator + playerUUID + ".yml");
         if (!playerFile.exists()) return profiles;
@@ -47,8 +48,8 @@ public class ProfileManager {
         for (String profileUUIDAsString : config.getKeys(false)) {
             UUID profileId = UUID.fromString(profileUUIDAsString);
             ConfigurationSection profileSection = config.getConfigurationSection(profileUUIDAsString);
+            Map<String, String> questData = (Map<String, String>) profileSection.get("quests");
 
-            assert profileSection != null;
             ClassType classType = ClassType.valueOf(profileSection.getString("class").toUpperCase());
 
             List<ItemStack> items = (List<ItemStack>) profileSection.get("inventory");
@@ -60,8 +61,7 @@ public class ProfileManager {
             int level = profileSection.getInt("level");
 
             assert player != null;
-            profiles.add(new Profile(profileId, player, classType, itemStacks, playerLocation, level));
-
+            profiles.add(new Profile(profileId, player, classType, itemStacks, playerLocation, level, questData));
         }
 
         return profiles;
@@ -99,6 +99,13 @@ public class ProfileManager {
 
         player.setLevel(level);
 
+        File file = new File(plugin.getDataFolder() + File.separator + "players" + File.separator + player.getUniqueId() + ".yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        Map<String, String> questData = (Map<String, String>) config.get("quests");
+        profile.setQuestData(questData);
+
+        System.out.println("Loaded profile for player: " + player.getName());
+
         profiles.put(player, profile);
     }
 
@@ -125,11 +132,13 @@ public class ProfileManager {
         config.set(profileId + ".location", player.getLocation());
         config.set(profileId + ".level", 1);
 
-        config.save(file);
+        Map<String, String> questData = QuestCreation.createQuests();
+        config.set(profileId + ".quests", questData);
 
+        config.save(file);
         player.setLevel(1);
 
-        profiles.put(player, new Profile(profileId, player, ClassType.valueOf(classType.toUpperCase()), player.getInventory().getContents(), player.getLocation(), 1));
+        profiles.put(player, new Profile(profileId, player, ClassType.valueOf(classType.toUpperCase()), player.getInventory().getContents(), player.getLocation(), 1, new HashMap<>()));
     }
 
     /**
@@ -153,8 +162,11 @@ public class ProfileManager {
         config.set(profileId + ".inventory", profile.getPlayerInventory());
         config.set(profileId + ".location", profile.getLocation());
         config.set(profileId + ".level", profile.getLevel());
+        config.set(profileId + ".quests", profile.getQuestData());
 
         config.save(file);
+        System.out.println("Saved profile for player: " + player.getName());
+
     }
 
 }

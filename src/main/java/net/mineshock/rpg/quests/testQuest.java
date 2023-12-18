@@ -10,20 +10,17 @@ import org.bukkit.event.player.PlayerMoveEvent;
 public class testQuest {
 
     @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
-        Quest quest = new Quest();
+    public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        String message = event.getMessage();
+        Quest quest = new Quest();
 
-        if (message.equalsIgnoreCase("test")) {
-            String villagerQuestState = quest.load(player.getUniqueId(), "villagerQuest");
-            if (villagerQuestState.equals("notStarted")) {
-                System.out.println("quest done");
-                // Update the quest stage to "completed"
-                quest.update(player.getUniqueId(), "villagerQuest", "completed");
-            }
+        String greetingQuestState = quest.load(player.getUniqueId(), "greetingQuest");
+        if (greetingQuestState == null || !greetingQuestState.equals("completed")) {
+            System.out.println("quest done");
+            // Update the quest stage to "completed"
+            quest.update(player.getUniqueId(), "villagerQuest", "completed");
         }
     }
-
-
 }
+
+
